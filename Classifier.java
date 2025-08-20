@@ -26,9 +26,52 @@ public class Classifier {
         throw new RuntimeException("Not yet implemented: save(PrintStream output)");
     }
 
-    // TODO: Implement your node class
+    /**
+     * A class representing a node in a classification tree.
+     */
     public static class ClassifierNode {
+        // For decision node
+        public final String feature;
+        public final double threshold;
 
+        // For leaf node
+        public final String label;
+        public final TextBlock initialBlock;
+
+        public ClassifierNode left;
+        public ClassifierNode right;
+
+        /**
+         * Constructs a decision node.
+         * 
+         * @param feature the feature being checked and decided upon
+         * @param threshold the value which a choice is determined upon
+         * @param left the left decision for values less than the threshold
+         * @param right the right decision for values equal or greater than the threshold
+         */
+        ClassifierNode(String feature, double threshold, ClassifierNode left, ClassifierNode right) {
+            this.feature = feature;
+            this.threshold = threshold;
+            this.left = left;
+            this.right = right;
+            this.label = "";
+            this.initialBlock = null;
+        }
+
+        /**
+         * Constructs a label node.
+         * 
+         * @param label the label of the resulting classification
+         * @param initiaBlock the text block a decision was first made with
+         */
+        ClassifierNode(String label, TextBlock initiaBlock) {
+            this.feature = "";
+            this.threshold = 0.0;
+            this.left = null;
+            this.right = null;
+            this.label = label;
+            this.initialBlock = initiaBlock;
+        }
     }
 
 
