@@ -1,11 +1,16 @@
+// Gunnar Von Bergen
+// 08/19/2025
+// CSE 123
+// P3: Spam Classifier
+// TA: Trien
 import java.io.*;
 import java.util.*;
 
-import org.w3c.dom.Text;
-
+/**
+ * TODO:
+ */
 public class Classifier {
 
-    // Add fields here
     private ClassifierNode root;
     
     /**
@@ -25,9 +30,58 @@ public class Classifier {
         if (this.root == null) throw new IllegalStateException("Tree is empty after read.");
     }
 
-    public Classifier(List<TextBlock> data, List<String> results) {
-        //  Remove the exception and implement this method
-        throw new RuntimeException("Not yet implemented: Classifier(List<TextBlock> Data, List<String> results)");
+    public Classifier(List<TextBlock> data, List<String> labels) {
+        if (data == null) throw new IllegalArgumentException("Data is null.");
+        if (labels == null) throw new IllegalArgumentException("Labels is null.");
+
+        if (data.isEmpty()) throw new IllegalArgumentException("Data is empty.");
+        if (labels.isEmpty()) throw new IllegalArgumentException("Labels is empty.");
+
+        if (data.size() != labels.size()) {
+            throw new IllegalArgumentException("Data and Labels are not equal size.");
+        }
+
+        this.root = null;
+
+        for (int i = 0; i < data.size(); i++) {
+            this.root = buildTree(this.root, data.get(i), labels.get(i));
+        }
+    }
+
+    private ClassifierNode buildTree(ClassifierNode node, TextBlock tb, String label) {
+        if (node == null) return new ClassifierNode(label, tb);
+
+        // If leaf, handle whether decision was accurate or not and update if needed
+        if (node.isLeaf()) {
+            // Correctly classified already
+            if (node.label.equals(label)) {
+                return node;
+            }
+            // Incorrectly classified, need to update decision node
+            if (node.initialBlock == null) {
+                throw new IllegalStateException("Node missing text block.");
+            }
+            String newFeature = tb.findBiggestDifference(node.initialBlock);
+            double newThreshold = midpoint(tb.get(newFeature), node.initialBlock.get(newFeature));
+
+            ClassifierNode newLeaf = new ClassifierNode(label, tb);
+            ClassifierNode oldLeaf = new ClassifierNode(node.label, node.initialBlock);
+
+            boolean newLeft = newLeaf.initialBlock.get(newFeature) < newThreshold;
+
+            ClassifierNode leftChild = newLeft ? newLeaf : oldLeaf;
+            ClassifierNode rightChild = newLeft ? oldLeaf : newLeaf;
+
+            return new ClassifierNode(newFeature, newThreshold, leftChild, rightChild);
+        }
+
+        // Not at a leaf node, just make a decision based on threshold.
+        if (tb.get(node.feature) < node.threshold) {
+            node.left = buildTree(node.left, tb, label);
+        } else {
+            node.right = buildTree(node.right, tb, label);
+        }
+        return node;
     }
 
     /**
