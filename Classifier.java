@@ -30,6 +30,16 @@ public class Classifier {
         if (this.root == null) throw new IllegalStateException("Tree is empty after read.");
     }
 
+    /**
+     * Creates a classifier using a list of text block data and corresponding labels.
+     * 
+     * @param data a list of text blocks to represent the data values associated
+     *             with labels to train a classification tree
+     * @param labels a list of label strings corresponding to text blocks that
+     *               will be used to train a classification tree
+     * @throws IllegalArgumentException if data or labels is null or empty, or 
+     *                                  if they are not equal in size.
+     */
     public Classifier(List<TextBlock> data, List<String> labels) {
         if (data == null) throw new IllegalArgumentException("Data is null.");
         if (labels == null) throw new IllegalArgumentException("Labels is null.");
@@ -48,6 +58,16 @@ public class Classifier {
         }
     }
 
+    /**
+     * Builds a classification tree by adding a labeled text block to an existing tree,
+     * or creates a new one if the passed node is empty.
+     * 
+     * @param node the current node being reviewed in the tree
+     * @param tb the text block containing the data for training
+     * @param label the label of the data to be used for classification
+     * @return a ClassifierNode that has been changed to reflect an updated tree.
+     * @throws IllegalStateException if a leaf node is missing a text block.
+     */
     private ClassifierNode buildTree(ClassifierNode node, TextBlock tb, String label) {
         if (node == null) return new ClassifierNode(label, tb);
 
