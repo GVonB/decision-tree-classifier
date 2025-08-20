@@ -34,9 +34,17 @@ public class Classifier {
         throw new RuntimeException("Not yet implemented: classify(TextBlock input)");
     }
 
+    /**
+     * Saves a classifier in a preorder-format file.
+     * 
+     * @param ps the PrintStream to output to
+     * @throws IllegalArgumentException if ps is null.
+     */
     public void save(PrintStream ps) {
-        // TODO: Remove the exception and implement this method
-        throw new RuntimeException("Not yet implemented: save(PrintStream output)");
+        if (ps == null) {
+            throw new IllegalArgumentException("PrintStream object is null");
+        }
+        savePreorder(root, ps);
     }
 
     /**
@@ -81,6 +89,12 @@ public class Classifier {
         } else {
             TextBlock initialNode = null;
             return new ClassifierNode(line, initialNode);
+        }
+    }
+
+    private void savePreorder(ClassifierNode node, PrintStream ps) {
+        if (node != null) {
+            if (node.isLeaf())
         }
     }
 
@@ -129,6 +143,15 @@ public class Classifier {
             this.right = null;
             this.label = label;
             this.initialBlock = initiaBlock;
+        }
+
+        /**
+         * Checks if a node is a leaf or not.
+         * 
+         * @return true if node is a leaf, false if not.
+         */
+        private boolean isLeaf() {
+            return left == null && right == null;
         }
     }
 
