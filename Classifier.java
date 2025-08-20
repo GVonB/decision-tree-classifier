@@ -61,7 +61,7 @@ public class Classifier {
      * 
      * @param sc a scanner reading the preorder-format file
      * @return a ClassifierNode for the current root of the tree, or null if empty.
-     * @throws IllegalArgumentException if the preorder-format file is incorrectly formatted.
+     * @throws IllegalStateException if the preorder-format file is incorrectly formatted.
      */
     private ClassifierNode readPreorder(Scanner sc) {
         if (!sc.hasNextLine()) return null;
@@ -78,12 +78,12 @@ public class Classifier {
                 String feature = line.substring("Feature: ".length());
             
             if (!sc.hasNextLine()) {
-                throw new IllegalArgumentException("Invalid scanner file.");
+                throw new IllegalStateException("Invalid scanner file.");
             }
 
             String thresholdLine = sc.nextLine();
             if (!thresholdLine.startsWith("Threshold: ")) {
-                throw new IllegalArgumentException("Invalid scanner file.");
+                throw new IllegalStateException("Invalid scanner file.");
             }
             double threshold = Double.parseDouble(thresholdLine.substring("Threshold: ".length()));
             
