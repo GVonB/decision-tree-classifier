@@ -16,12 +16,13 @@ public class Classifier {
      * Label
      * 
      * @param sc a scanner object reading a preorder-format file
-     * @throws IllegalArgumentException if sc is null or the file being read is invalid.
+     * @throws IllegalArgumentException if sc is null.
+     * @throws IllegalStateException if the tree is empty after reading the scanner.
      */
     public Classifier(Scanner sc) {
         if (sc == null) throw new IllegalArgumentException("Scanner object is null.");
         this.root = readPreorder(sc);
-        if (this.root == null) throw new IllegalArgumentException("Tree is empty after read.");
+        if (this.root == null) throw new IllegalStateException("Tree is empty after read.");
     }
 
     public Classifier(List<TextBlock> data, List<String> results) {
