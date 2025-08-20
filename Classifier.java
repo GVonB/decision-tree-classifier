@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.*;
 
+import org.w3c.dom.Text;
+
 public class Classifier {
 
     // Add fields here
@@ -8,6 +10,10 @@ public class Classifier {
     
     /**
      * Loads a classifier from a preorder-format file.
+     * The valid format is as follows (label has no prefix):
+     * Feature: here
+     * Threshold: 0.125
+     * Label
      * 
      * @param sc a scanner object reading a preorder-format file
      */
@@ -34,6 +40,10 @@ public class Classifier {
 
     /**
      * Reads a preorder-format file to construct a classification tree.
+     * The valid format is as follows (label has no prefix):
+     * Feature: here
+     * Threshold: 0.125
+     * Label
      * 
      * @param sc a scanner reading the preorder-format file
      * @return a ClassifierNode for the current root of the tree, or null if empty.
@@ -41,33 +51,36 @@ public class Classifier {
      */
     private ClassifierNode readPreorder(Scanner sc) {
         if (!sc.hasNextLine()) return null;
-        String line = sc.nextLine();
+            String line = sc.nextLine();
 
-        // Handle empty lines by going until non-empty, or early return
-        while (line.isEmpty() && sc.hasNextLine()) {
-            line = sc.nextLine();
-        }
-        if (line.isEmpty()) return null;
+            // Handle empty lines by going until non-empty, or early return
+            while (line.isEmpty() && sc.hasNextLine()) {
+                line = sc.nextLine();
+            }
+            if (line.isEmpty()) return null;
 
-        if (!line.startsWith("Feature: ")) {
-            throw new IllegalArgumentException("Invalid scanner file.");
-        }
-        String feature = line.substring("Feature: ".length());
-        
-        if (!sc.hasNextLine()) {
-            throw new IllegalArgumentException("Invalid scanner file.");
-        }
+            // Handle feature and threshold at once, so if no, node must be a label
+            if (line.startsWith("Feature: ")) {
+                String feature = line.substring("Feature: ".length());
+            
+            if (!sc.hasNextLine()) {
+                throw new IllegalArgumentException("Invalid scanner file.");
+            }
 
-        String thresholdLine = sc.nextLine();
-        if (!thresholdLine.startsWith("Threshold: ")) {
-            throw new IllegalArgumentException("Invalid scanner file.");
+            String thresholdLine = sc.nextLine();
+            if (!thresholdLine.startsWith("Threshold: ")) {
+                throw new IllegalArgumentException("Invalid scanner file.");
+            }
+            double threshold = Double.parseDouble(thresholdLine.substring("Threshold: ".length()));
+            
+            ClassifierNode left = readPreorder(sc);
+            ClassifierNode right = readPreorder(sc);
+            
+            return new ClassifierNode(feature, threshold, left, right);
+        } else {
+            TextBlock initialNode = null;
+            return new ClassifierNode(line, initialNode);
         }
-        double threshold = Double.parseDouble(thresholdLine.substring("Threshold: ".length()));
-        
-        ClassifierNode left = readPreorder(sc);
-        ClassifierNode right = readPreorder(sc);
-        
-        return new ClassifierNode(feature, threshold, left, right);
     }
 
     /**
