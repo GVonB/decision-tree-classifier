@@ -36,6 +36,10 @@ public class Classifier {
 
     /**
      * Saves a classifier in a preorder-format file.
+     * Format is:
+     * Feature: here
+     * Threshold: 0.125
+     * Label
      * 
      * @param ps the PrintStream to output to
      * @throws IllegalArgumentException if ps is null.
@@ -92,9 +96,27 @@ public class Classifier {
         }
     }
 
+    /**
+     * Saves a preorder-format output to a PrintStream representing the classifier.
+     * The format follows:
+     * Feature: here
+     * Threshold: 0.125
+     * Label
+     * 
+     * @param node the current node being handled
+     * @param ps the output PrintStream object
+     */
     private void savePreorder(ClassifierNode node, PrintStream ps) {
+        // Another argument for allowing void returns in cse123
         if (node != null) {
-            if (node.isLeaf())
+            if (node.isLeaf()) {
+                ps.println(node.label);
+            } else {
+                ps.println("Feature: " + node.feature);
+                ps.println("Threshold: " + node.threshold);
+                savePreorder(node.left, ps);
+                savePreorder(node.right, ps);
+            }
         }
     }
 
