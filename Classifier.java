@@ -4,15 +4,21 @@ import java.util.*;
 public class Classifier {
 
     // Add fields here
+    private ClassifierNode root;
     
-
+    /**
+     * Loads a classifier from a preorder-format file.
+     * 
+     * @param sc a scanner object reading a preorder-format file
+     */
     public Classifier(Scanner sc) {
-        // TODO: Remove the exception and implement this method
-        throw new RuntimeException("Not yet implemented: Classifier(Scanner input)");
+        if (sc == null) throw new IllegalArgumentException("Scanner object is null.");
+        this.root = readPreorder(sc);
+        if (this.root == null) throw new IllegalArgumentException("Tree is empty after read.");
     }
 
     public Classifier(List<TextBlock> data, List<String> results) {
-        // TODO: Remove the exception and implement this method
+        //  Remove the exception and implement this method
         throw new RuntimeException("Not yet implemented: Classifier(List<TextBlock> Data, List<String> results)");
     }
 
@@ -24,6 +30,44 @@ public class Classifier {
     public void save(PrintStream ps) {
         // TODO: Remove the exception and implement this method
         throw new RuntimeException("Not yet implemented: save(PrintStream output)");
+    }
+
+    /**
+     * Reads a preorder-format file to construct a classification tree.
+     * 
+     * @param sc a scanner reading the preorder-format file
+     * @return a ClassifierNode for the current root of the tree, or null if empty.
+     * @throws IllegalArgumentException if the preorder-format file is incorrectly formatted.
+     */
+    private ClassifierNode readPreorder(Scanner sc) {
+        if (!sc.hasNextLine()) return null;
+        String line = sc.nextLine();
+
+        // Handle empty lines by going until non-empty, or early return
+        while (line.isEmpty() && sc.hasNextLine()) {
+            line = sc.nextLine();
+        }
+        if (line.isEmpty()) return null;
+
+        if (!line.startsWith("Feature: ")) {
+            throw new IllegalArgumentException("Invalid scanner file.");
+        }
+        String feature = line.substring("Feature: ".length());
+        
+        if (!sc.hasNextLine()) {
+            throw new IllegalArgumentException("Invalid scanner file.");
+        }
+
+        String thresholdLine = sc.nextLine();
+        if (!thresholdLine.startsWith("Threshold: ")) {
+            throw new IllegalArgumentException("Invalid scanner file.");
+        }
+        double threshold = Double.parseDouble(thresholdLine.substring("Threshold: ".length()));
+        
+        ClassifierNode left = readPreorder(sc);
+        ClassifierNode right = readPreorder(sc);
+        
+        return new ClassifierNode(feature, threshold, left, right);
     }
 
     /**
