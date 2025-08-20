@@ -254,7 +254,6 @@ public class Classifier {
      * @param ps   the output PrintStream object
      */
     private void savePreorder(ClassifierNode node, PrintStream ps) {
-        // Another argument for allowing void returns in cse123
         if (node != null) {
             if (node.isLeaf()) {
                 ps.println(node.label);
@@ -270,7 +269,7 @@ public class Classifier {
     /**
      * A class representing a node in a classification tree.
      */
-    private static class ClassifierNode {
+    private static final class ClassifierNode {
         // For decision node
         public final String feature;
         public final double threshold;
@@ -283,36 +282,48 @@ public class Classifier {
         public ClassifierNode right;
 
         /**
-         * Constructs a decision node.
+         * Constructs a node with all fields explicitly provided.
          * 
-         * @param feature   the feature being checked and decided upon
-         * @param threshold the value which a choice is determined upon
-         * @param left      the left decision for values less than the threshold
-         * @param right     the right decision for values equal or greater than the
-         *                  threshold
+         * @param feature      the feature being checked and decided upon
+         * @param threshold    the value which a choice is determined upon
+         * @param label        the label for a leaf node, or empty string for a decision
+         *                     node
+         * @param initialBlock the initial text block stored at a leaf
+         * @param left         the left decision for values less than the threshold
+         * @param right        the right decision for values equal or greater than the
+         *                     threshold
          */
-        ClassifierNode(String feature, double threshold, ClassifierNode left, ClassifierNode right) {
+        private ClassifierNode(String feature, double threshold,
+                String label, TextBlock initialBlock,
+                ClassifierNode left, ClassifierNode right) {
             this.feature = feature;
             this.threshold = threshold;
+            this.label = label;
+            this.initialBlock = initialBlock;
             this.left = left;
             this.right = right;
-            this.label = "";
-            this.initialBlock = null;
         }
 
         /**
-         * Constructs a label node.
+         * Constructs a decision node in the classification tree.
+         *
+         * @param feature   the feature being checked and decided upon
+         * @param threshold the value used as the cutoff for the decision
+         * @param left      the left subtree for values less than the threshold
+         * @param right     the right subtree for values greater than or equal to the threshold
+        */
+        ClassifierNode(String feature, double threshold, ClassifierNode left, ClassifierNode right) {
+            this(feature, threshold, "", null, left, right);
+        }
+
+        /**
+         * Constructs a leaf/label node in the classification tree.
          * 
          * @param label        the label of the resulting classification
          * @param initialBlock the text block a decision was first made with
          */
         ClassifierNode(String label, TextBlock initialBlock) {
-            this.feature = "";
-            this.threshold = 0.0;
-            this.left = null;
-            this.right = null;
-            this.label = label;
-            this.initialBlock = initialBlock;
+            this("", 0.0, label, initialBlock, null, null);
         }
 
         /**
