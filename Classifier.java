@@ -270,7 +270,7 @@ public class Classifier {
     /**
      * A class representing a node in a classification tree.
      */
-    public static class ClassifierNode {
+    private static class ClassifierNode {
         // For decision node
         public final String feature;
         public final double threshold;
@@ -303,16 +303,16 @@ public class Classifier {
         /**
          * Constructs a label node.
          * 
-         * @param label       the label of the resulting classification
-         * @param initiaBlock the text block a decision was first made with
+         * @param label        the label of the resulting classification
+         * @param initialBlock the text block a decision was first made with
          */
-        ClassifierNode(String label, TextBlock initiaBlock) {
+        ClassifierNode(String label, TextBlock initialBlock) {
             this.feature = "";
             this.threshold = 0.0;
             this.left = null;
             this.right = null;
             this.label = label;
-            this.initialBlock = initiaBlock;
+            this.initialBlock = initialBlock;
         }
 
         /**
