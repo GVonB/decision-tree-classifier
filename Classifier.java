@@ -30,9 +30,39 @@ public class Classifier {
         throw new RuntimeException("Not yet implemented: Classifier(List<TextBlock> Data, List<String> results)");
     }
 
+    /**
+     * Classifies a text block by returning the determined label.
+     * 
+     * @param input the text block to be classified
+     * @return the classification of the text block as a string.
+     * @throws IllegalArgumentException if input is null.
+     * @throws IllegalStateException if root node is null.
+     */
     public String classify(TextBlock input) {
-        // TODO: Remove the exception and implement this method
-        throw new RuntimeException("Not yet implemented: classify(TextBlock input)");
+        if (input == null) throw new IllegalArgumentException("Input is null.");
+        return classify(root, input);
+    }
+
+    /**
+     * Returns a string representing what label the provided text block
+     * is classified as based on the given decision tree root node.
+     * 
+     * @param node the current node of the decision tree
+     * @param tb the text block being classified
+     * @return the classification of the text block as a string.
+     * @throws IllegalStateException if node is null.
+     */
+    private String classify(ClassifierNode node, TextBlock tb) {
+        if (node == null) throw new IllegalStateException("Empty tree");
+        if (node.isLeaf()) return node.label;
+
+        double nodeThresholdValue = tb.get(node.feature);
+        
+        if (nodeThresholdValue < node.threshold) {
+            return classify(node.left, tb);
+        }
+
+        return classify(node.right, tb);
     }
 
     /**
