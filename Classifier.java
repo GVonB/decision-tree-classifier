@@ -16,6 +16,7 @@ public class Classifier {
      * Label
      * 
      * @param sc a scanner object reading a preorder-format file
+     * @throws IllegalArgumentException if sc is null or the file being read is invalid.
      */
     public Classifier(Scanner sc) {
         if (sc == null) throw new IllegalArgumentException("Scanner object is null.");
